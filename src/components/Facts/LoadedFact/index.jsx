@@ -50,12 +50,14 @@ function LoadedFact() {
           variant='h1'
           fontWeight='700'
           style={dateStyle}>
-          {currentFact.number}
+          {currentFact?.number || 'No Fact Available'}
         </Typography>
         <Typography
           variant='text'>
-          {currentFact.date && `${currentFact.date}: `}
-          {currentFact.text}
+          <Typography variant="text">
+            {currentFact?.date ? `${currentFact.date}: ` : ''}
+            {currentFact?.text || 'No details available.'}
+          </Typography>
         </Typography>
       </Box>
       <Box
