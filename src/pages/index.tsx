@@ -1,16 +1,14 @@
 import Head from "next/head";
-import localFont from "next/font/local";
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from '../../theme';
+import Container from '../components/Container'
+import { FactsContextProvider } from '../context/FactsContext'
+import { Playfair_Display } from 'next/font/google'
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+const mainFontFamily = Playfair_Display({
+  weight: ['400', '700'],
+  subsets: ['latin']
+})
 
 export default function Home() {
   return (
@@ -21,10 +19,16 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div
-        className={`${geistSans.variable} ${geistMono.variable}`}>
-          initial config
-      </div>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div
+          className={mainFontFamily.className}>
+          <FactsContextProvider>
+            <Container />
+          </FactsContextProvider>
+        </div>
+      </ThemeProvider>
+
     </>
   );
 }
