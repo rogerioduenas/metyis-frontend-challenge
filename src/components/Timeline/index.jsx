@@ -10,7 +10,7 @@ const imageStyle = {
   cursor: 'pointer'
 };
 
-let years = [1800, 1850, 1900, 1950, 2000];
+const years = [1800, 1850, 1900, 1950, 2000];
 
 function Timeline() {
   const {
@@ -20,7 +20,7 @@ function Timeline() {
     setCurrentFactIndex,
   } = useContext(FactsContext);
 
-  const [bgColor, setBgColor] = useState();
+  const [bgColor, setBgColor] = useState('primary');
 
   useEffect(() => {
     if (fact.length === 0) {
@@ -32,38 +32,43 @@ function Timeline() {
     setBgColor((prevColor) => (prevColor === '#909c9a' ? '#d09c8c' : '#909c9a'));
   };
 
-  async function getYearFact() {
-    const fact = await getRandomYearFact()
-    setFact((prevFacts) => {
-      const updatedFacts = [...prevFacts,  fact ]
-      setCurrentFactIndex(updatedFacts.length - 1)
-      return updatedFacts
-    })
-  }
+  const getYearFact = async () => {
+    const newFact = await getRandomYearFact();
+    if (newFact && newFact.number) {
+      setFact((prevFacts) => {
+        const updatedFacts = [...prevFacts, newFact];
+        setCurrentFactIndex(updatedFacts.length - 1);
+        return updatedFacts;
+      });
+    } else {
+      console.error('Erro ao adicionar fato do ano. Retorno inválido:', newFact);
+    }
+  };
 
   const handleFact = () => {
-    getYearFact()
-    changeBgColor()
-  }
+    getYearFact();
+    changeBgColor();
+  };
 
   const pingPosition = (index) => {
-    const baseYear = 1800
-    const scale = 2
-    const date = fact[index].number
-    return (date - baseYear) / scale
-  }
+    const baseYear = 1800;
+    const scale = 2;
+    const date = fact[index]?.number || baseYear;
+    return (date - baseYear) / scale;
+  };
 
   const handlePrevious = () => {
     setCurrentFactIndex((prevIndex) =>
       prevIndex > 0 ? prevIndex - 1 : fact.length - 1
-    )
-  }
+    );
+  };
 
   const handleNext = () => {
     setCurrentFactIndex((prevIndex) =>
       prevIndex < fact.length - 1 ? prevIndex + 1 : 0
-    )
-  }
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -139,7 +144,7 @@ function Timeline() {
               height={25}
               width={25}
               src="/assets/icons/arrow.svg"
-              alt="tanana"
+              alt="Previous"
               style={{ cursor: 'pointer' }}
               onClick={handlePrevious}
             />
@@ -147,7 +152,7 @@ function Timeline() {
               height={25}
               width={25}
               src="/assets/icons/arrow.svg"
-              alt="tanana"
+              alt="Next"
               style={imageStyle}
               onClick={handleNext}
             />
