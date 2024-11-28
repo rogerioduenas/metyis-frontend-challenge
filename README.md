@@ -9,7 +9,7 @@ This project is a fun and interactive application that displays random historica
   - The fact is displayed on the main screen and added to the interactive timeline.
 
 - **🗂️ Interactive Timeline:**
-  - A marker 🟠 highlights the current and previous facts.
+  - A marker highlights the current and previous facts.
   - Navigate through the facts with intuitive controls 🔄.
 
 - **🛠️ Fact Management:**
