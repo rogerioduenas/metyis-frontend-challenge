@@ -5,12 +5,12 @@ export async function getRandomYearFact() {
   try {
     const response = await fetch(`${PROXY_URL}${API_URL}`);
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      return { isError: true, message: 'Network response was not ok' };
     }
     const data = await response.json();
-    return data;
+    return { isError: false, data };
   } catch (error) {
     console.error('Error fetching random year fact:', error);
-    return null;
+    return { isError: true };
   }
 }
