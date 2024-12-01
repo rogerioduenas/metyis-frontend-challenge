@@ -19,7 +19,7 @@ function ErrorMessage() {
         </a>
       </Typography>
       <Typography variant="body1" sx={{ marginTop: '16px' }}>
-        After that, restart the page and try again. I hope it works... if not, I guess the universe owes us an explanation! 😊
+        After that, try again. I hope it works... if not, I guess the universe owes us an explanation! 😊
       </Typography>
       <Typography variant="body1" sx={{ marginTop: '16px' }}>
         If the issue persists, you can check the <a href="https://github.com/rogerioduenas/metyis-frontend-challenge" target="_blank" rel="noopener noreferrer" style={{ color: '#1976d2' }}>README</a> or reach out to me. We apologize for the inconvenience!
