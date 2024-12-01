@@ -1,33 +1,38 @@
-import React, { useContext } from 'react'
-import { Typography, Box } from '@mui/material'
-import Image from 'next/image'
+import React, { useContext, useState } from 'react';
+import { Typography, Box } from '@mui/material';
+import Image from 'next/image';
 import FactsContext from '@/context/FactsContext';
+import ErrorMessage from './errorMessage'
 
 const dateStyle = {
   width: '100px',
   wordBreak: "break-word",
   lineHeight: "0.8",
-}
+};
 
 function LoadedFact() {
-
   const { fact, setFact, currentFactIndex, setCurrentFactIndex } = useContext(FactsContext);
-
   const currentFact = fact[currentFactIndex];
 
-  const restartApp = () => setFact([])
+  const restartApp = () => setFact([]);
 
   const deleteFact = () => {
-    const newArray = fact.filter((_, index) => index !== currentFactIndex)
-    setFact(newArray)
+    const newArray = fact.filter((_, index) => index !== currentFactIndex);
+    setFact(newArray);
 
     if (newArray.length > 0) {
       return setCurrentFactIndex((prevIndex) =>
         prevIndex >= newArray.length ? newArray.length - 1 : prevIndex
-      )
+      );
     }
-
     return setCurrentFactIndex(0);
+  };
+
+  const lastFact = fact[fact.length - 1];
+  if (lastFact?.isError) {
+    return (
+      <ErrorMessage />
+    )
   }
 
   return (
@@ -37,23 +42,25 @@ function LoadedFact() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '10%'
-      }}>
+        padding: '10%',
+      }}
+    >
       <Box
         sx={{
           width: '60%',
           display: 'flex',
           flexDirection: 'column',
           rowGap: '40px',
-        }}>
+        }}
+      >
         <Typography
-          variant='h1'
-          fontWeight='700'
-          style={dateStyle}>
+          variant="h1"
+          fontWeight="700"
+          style={dateStyle}
+        >
           {currentFact?.number || 'No Fact Available'}
         </Typography>
-        <Typography
-          variant='text'>
+        <Typography variant="text">
           <Typography variant="text">
             {currentFact?.date ? `${currentFact.date}: ` : ''}
             {currentFact?.text || 'No details available.'}
@@ -65,13 +72,14 @@ function LoadedFact() {
           display: 'flex',
           height: '100%',
           flexDirection: 'column',
-          justifyContent: 'space-between'
-        }}>
+          justifyContent: 'space-between',
+        }}
+      >
         <Image
           src="/assets/icons/close.svg"
           width={40}
           height={40}
-          alt="Picture of the author"
+          alt="Restart App"
           onClick={restartApp}
           style={{ cursor: 'pointer' }}
         />
@@ -79,13 +87,13 @@ function LoadedFact() {
           src="/assets/icons/delete.svg"
           width={40}
           height={40}
-          alt="Picture of the author"
+          alt="Delete Fact"
           onClick={deleteFact}
           style={{ cursor: 'pointer' }}
         />
       </Box>
     </Box>
-  )
+  );
 }
 
-export default LoadedFact
+export default LoadedFact;

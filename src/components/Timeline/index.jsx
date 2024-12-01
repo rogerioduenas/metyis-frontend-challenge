@@ -4,15 +4,11 @@ import Image from 'next/image';
 import Ping from './Ping';
 import FactsContext from '@/context/FactsContext';
 import { getRandomYearFact } from '@/pages/api/getRandomYearFact';
+import CircularProgress from '@mui/material/CircularProgress';
 
-const imageStyle = {
-  transform: 'rotate(180deg)',
-  cursor: 'pointer'
-};
+const years = [1800, 1850, 1900, 1950, 2000]
 
-const years = [1800, 1850, 1900, 1950, 2000];
-
-function Timeline() {
+const Timeline = () => {
   const {
     fact,
     setFact,
@@ -21,6 +17,7 @@ function Timeline() {
   } = useContext(FactsContext);
 
   const [bgColor, setBgColor] = useState('primary');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (fact.length === 0) {
@@ -33,17 +30,45 @@ function Timeline() {
   };
 
   const getYearFact = async () => {
-    const newFact = await getRandomYearFact();
-    if (newFact && newFact.number) {
+    setIsLoading(true);
+
+    try {
+      const factResponse = await getRandomYearFact();
+
+      if (factResponse.isError) {
+        console.error('Error fetching random year fact:', factResponse.message);
+        setFact((prevFacts) => [
+          ...prevFacts,
+          { isError: true, message: factResponse.message || 'An error occurred' }
+        ]);
+        return;
+      }
+
+      if (!factResponse.data || !factResponse.data.number) {
+        console.error('Error adding year fact. Invalid return:', factResponse);
+        setFact((prevFacts) => [
+          ...prevFacts,
+          { isError: true, message: 'Invalid data returned from API' }
+        ]);
+        return;
+      }
+
       setFact((prevFacts) => {
-        const updatedFacts = [...prevFacts, newFact];
+        const updatedFacts = [...prevFacts, factResponse.data];
         setCurrentFactIndex(updatedFacts.length - 1);
         return updatedFacts;
       });
-    } else {
-      console.error('Erro ao adicionar fato do ano. Retorno inválido:', newFact);
+    } catch (error) {
+      console.error('Request error:', error);
+      setFact((prevFacts) => [
+        ...prevFacts,
+        { isError: true, message: error.message || 'Unexpected error occurred' }
+      ]);
+    } finally {
+      setIsLoading(false);
     }
   };
+
 
   const handleFact = () => {
     getYearFact();
@@ -81,29 +106,40 @@ function Timeline() {
         },
       }}
     >
-      <Button
-        variant="outlined"
-        color={fact.length > 0 ? 'primary' : 'secondary'}
-        onClick={handleFact}
-        sx={{
-          position: 'absolute',
-          left: '50%',
-          top: '50%',
-          width: '250px',
-          padding: '10px',
-          transform: 'translate(-50%, -50%)',
-          "@media (max-width: 1024px)": {
-            top: '20%',
-          },
-          "@media (max-width: 500px)": {
-            top: '13%',
-            width: '230px',
-            padding: '5px',
-          },
-        }}
-      >
-        Generate Random Year Fact
-      </Button>
+      {isLoading ? (
+        <CircularProgress
+          sx={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        />
+      ) : (
+        <Button
+          variant="outlined"
+          color={fact.length > 0 ? 'primary' : 'secondary'}
+          onClick={handleFact}
+          sx={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            width: '250px',
+            padding: '10px',
+            transform: 'translate(-50%, -50%)',
+            "@media (max-width: 1024px)": {
+              top: '20%',
+            },
+            "@media (max-width: 500px)": {
+              top: '13%',
+              width: '230px',
+              padding: '5px',
+            },
+          }}
+        >
+          Generate Random Year Fact
+        </Button>
+      )}
       <Box
         sx={{
           position: 'absolute',
@@ -153,7 +189,10 @@ function Timeline() {
               width={25}
               src="/assets/icons/arrow.svg"
               alt="Next"
-              style={imageStyle}
+              style={{
+                transform: 'rotate(180deg)',
+                cursor: 'pointer',
+              }}
               onClick={handleNext}
             />
           </Box>
@@ -201,6 +240,6 @@ function Timeline() {
       </Box>
     </Box>
   );
-}
+};
 
 export default Timeline;
